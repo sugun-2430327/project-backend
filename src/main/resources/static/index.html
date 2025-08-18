@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Insurance Authentication Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .test-endpoints {
+            margin-top: 20px;
+        }
+        .test-endpoints button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Auto Insurance Authentication Test</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab(event, 'login')">Login</div>
+            <div class="tab" onclick="openTab(event, 'register')">Register</div>
+            <div class="tab" onclick="openTab(event, 'profile')">Profile</div>
+        </div>
+        
+        <div id="login" class="tab-content active">
+            <div class="form-container">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button onclick="login()">Login</button>
+                <div id="loginMessage" class="message"></div>
+                
+                <div id="testEndpoints" style="display: none;" class="test-endpoints">
+                    <h3>Test Endpoints</h3>
+                    <button onclick="testEndpoint('all')">Public Content</button>
+                    <button onclick="testEndpoint('customer')">Customer Content</button>
+                    <button onclick="testEndpoint('agent')">Agent Content</button>
+                    <button onclick="testEndpoint('admin')">Admin Content</button>
+                    <div id="endpointMessage" class="message"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="register" class="tab-content">
+            <div class="form-container">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label for="regUsername">Username:</label>
+                    <input type="text" id="regUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password:</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Role:</label>
+                    <select id="regRole">
+                        <option value="CUSTOMER">Customer</option>
+                        <option value="AGENT">Agent</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+                <button onclick="register()">Register</button>
+                <div id="registerMessage" class="message"></div>
+            </div>
+        </div>
+        
+        <div id="profile" class="tab-content">
+            <div class="form-container">
+                <h2>User Profile</h2>
+                <button onclick="getUserProfile()">Get Profile</button>
+                <div id="profileInfo" class="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('token');
+        
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+            
+            try {
+                const response = await fetch('http://localhost:8090/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = `Login successful! Welcome ${data.username}`;
+                    messageDiv.className = 'message success';
+                    
+                    // Store token
+                    token = data.token;
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data));
+                    
+                    // Show test endpoints
+                    document.getElementById('testEndpoints').style.display = 'block';
+                } else {
+                    messageDiv.textContent = data.message || 'Login failed. Please check your credentials.';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Login failed. Server error.';
+                messageDiv.className = 'message error';
+                console.error('Login error:', error);
+            }
+        }
+        
+        async function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const email = document.getElementById('regEmail').value;
+            const role = document.getElementById('regRole').value;
+            const messageDiv = document.getElementById('registerMessage');
+            
+            try {
+                const response = await fetch('http://localhost:8090/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, email, role })
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    messageDiv.textContent = 'Registration successful! Please login.';
+                    messageDiv.className = 'message success';
+                } else {
+                    messageDiv.textContent = data || 'Registration failed. Please try again.';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Registration failed. Server error.';
+                messageDiv.className = 'message error';
+                console.error('Registration error:', error);
+            }
+        }
+        
+        async function testEndpoint(endpoint) {
+            const messageDiv = document.getElementById('endpointMessage');
+            
+            try {
+                const response = await fetch(`http://localhost:8090/api/test/${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    messageDiv.textContent = data;
+                    messageDiv.className = 'message success';
+                } else {
+                    messageDiv.textContent = `Access denied to ${endpoint} endpoint`;
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = `Error accessing ${endpoint} endpoint`;
+                messageDiv.className = 'message error';
+                console.error('API error:', error);
+            }
+        }
+        
+        async function getUserProfile() {
+            const messageDiv = document.getElementById('profileInfo');
+            
+            if (!token) {
+                messageDiv.textContent = 'You must login first!';
+                messageDiv.className = 'message error';
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8090/api/users/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = `
+                        <p><strong>User ID:</strong> ${data.userId}</p>
+                        <p><strong>Username:</strong> ${data.username}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Role:</strong> ${data.role}</p>
+                    `;
+                    messageDiv.className = 'message success';
+                } else {
+                    messageDiv.textContent = data.message || 'Failed to get profile';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error getting profile';
+                messageDiv.className = 'message error';
+                console.error('Profile error:', error);
+            }
+        }
+        
+        // Check if user is already logged in
+        if (token) {
+            document.getElementById('testEndpoints').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+{
+  "info": {
+    "name": "Policy Management APIs",
+    "description": "Test collection for Insurance Policy Management System with Role-Based Access Control",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8090"
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    },
+    {
+      "key": "agent_token",
+      "value": ""
+    },
+    {
+      "key": "customer_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_user\",\n  \"password\": \"admin123\",\n  \"email\": \"admin@insurance.com\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"agent_john\",\n  \"password\": \"agent123\",\n  \"email\": \"john@insurance.com\",\n  \"role\": \"AGENT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_alice\",\n  \"password\": \"customer123\",\n  \"email\": \"alice@customer.com\",\n  \"role\": \"CUSTOMER\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_user\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('admin_token', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"agent_john\",\n  \"password\": \"agent123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('agent_token', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_alice\",\n  \"password\": \"customer123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('customer_token', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Policy Management - Admin Tests",
+      "item": [
+        {
+          "name": "Create Policy (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policyNumber\": \"POL-2024-001\",\n  \"vehicleDetails\": \"Toyota Camry 2023, VIN: ABC123456\",\n  \"coverageAmount\": 50000.00,\n  \"coverageType\": \"Full Coverage\",\n  \"premiumAmount\": 1200.50,\n  \"startDate\": \"2024-08-15\",\n  \"endDate\": \"2025-08-15\",\n  \"policyStatus\": \"ACTIVE\",\n  \"policyHolderId\": 3,\n  \"agentId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Get All Policies (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Get Policy by ID (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Policy (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policyNumber\": \"POL-2024-001\",\n  \"vehicleDetails\": \"Toyota Camry 2023, VIN: ABC123456 - Updated\",\n  \"coverageAmount\": 55000.00,\n  \"coverageType\": \"Full Coverage Plus\",\n  \"premiumAmount\": 1350.75,\n  \"startDate\": \"2024-08-15\",\n  \"endDate\": \"2025-08-15\",\n  \"policyStatus\": \"ACTIVE\",\n  \"policyHolderId\": 3,\n  \"agentId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/policies/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Policy (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Policy Management - Agent Tests",
+      "item": [
+        {
+          "name": "Create Policy (Agent)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policyNumber\": \"POL-2024-002\",\n  \"vehicleDetails\": \"Honda Civic 2022, VIN: XYZ789012\",\n  \"coverageAmount\": 35000.00,\n  \"coverageType\": \"Liability Only\",\n  \"premiumAmount\": 800.00,\n  \"startDate\": \"2024-09-01\",\n  \"endDate\": \"2025-09-01\",\n  \"policyStatus\": \"ACTIVE\",\n  \"policyHolderId\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Get All Policies (Agent - Only Their Clients)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Delete Policy (Agent - Should Fail)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Policy Management - Customer Tests",
+      "item": [
+        {
+          "name": "Get All Policies (Customer - Only Own)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Create Policy (Customer - Should Fail)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policyNumber\": \"POL-2024-003\",\n  \"vehicleDetails\": \"Ford F-150 2023\",\n  \"coverageAmount\": 45000.00,\n  \"coverageType\": \"Full Coverage\",\n  \"premiumAmount\": 1000.00,\n  \"startDate\": \"2024-08-20\",\n  \"endDate\": \"2025-08-20\",\n  \"policyStatus\": \"ACTIVE\",\n  \"policyHolderId\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/policies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies"]
+            }
+          }
+        },
+        {
+          "name": "Update Policy (Customer - Should Fail)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"policyNumber\": \"POL-2024-001\",\n  \"vehicleDetails\": \"Toyota Camry 2023\",\n  \"coverageAmount\": 55000.00,\n  \"coverageType\": \"Full Coverage\",\n  \"premiumAmount\": 1350.75,\n  \"startDate\": \"2024-08-15\",\n  \"endDate\": \"2025-08-15\",\n  \"policyStatus\": \"ACTIVE\",\n  \"policyHolderId\": 3,\n  \"agentId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/policies/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "policies", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
