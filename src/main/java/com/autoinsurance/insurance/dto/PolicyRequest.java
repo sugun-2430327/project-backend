@@ -36,7 +36,7 @@ public class PolicyRequest {
     // Optional - for policy templates created by admin
     private Long policyHolderId;
 
-    private Long agentId; // Optional for admin, required for agent operations
+
 
     // Default constructor
     public PolicyRequest() {
@@ -115,11 +115,5 @@ public class PolicyRequest {
         this.policyHolderId = policyHolderId;
     }
 
-    public Long getAgentId() {
-        return agentId;
-    }
 
-    public void setAgentId(Long agentId) {
-        this.agentId = agentId;
-    }
 }

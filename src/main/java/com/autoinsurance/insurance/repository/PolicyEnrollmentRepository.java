@@ -20,8 +20,7 @@ public interface PolicyEnrollmentRepository extends JpaRepository<PolicyEnrollme
     // Find enrollments by status
     List<PolicyEnrollment> findByEnrollmentStatus(PolicyEnrollment.EnrollmentStatus status);
 
-    // Find enrollments by agent
-    List<PolicyEnrollment> findByAgent(User agent);
+
 
     // Check if customer already has an approved enrollment for a policy template
     @Query("SELECT COUNT(pe) > 0 FROM PolicyEnrollment pe WHERE pe.customer = :customer AND pe.policyTemplate = :policyTemplate AND pe.enrollmentStatus = 'APPROVED'")
@@ -39,19 +38,13 @@ public interface PolicyEnrollmentRepository extends JpaRepository<PolicyEnrollme
     @Query("SELECT pe FROM PolicyEnrollment pe WHERE pe.customer = :customer AND pe.policyTemplate = :policyTemplate ORDER BY pe.enrolledDate DESC LIMIT 1")
     Optional<PolicyEnrollment> findLatestEnrollmentByCustomerAndTemplate(@Param("customer") User customer, @Param("policyTemplate") Policy policyTemplate);
 
-    // Find all enrollments pending agent review (newly submitted)
+    // Find all enrollments pending admin review (newly submitted)
     @Query("SELECT pe FROM PolicyEnrollment pe WHERE pe.enrollmentStatus = 'PENDING' ORDER BY pe.enrolledDate ASC")
     List<PolicyEnrollment> findAllPendingEnrollments();
 
-    // Find all enrollments that agent approved, awaiting admin review
-    @Query("SELECT pe FROM PolicyEnrollment pe WHERE pe.enrollmentStatus = 'AGENT_APPROVED' ORDER BY pe.agentApprovedDate ASC")
-    List<PolicyEnrollment> findAllAgentApprovedEnrollments();
 
-    // Find pending enrollments assigned to a specific agent (if agent assignment happens before approval)
-    @Query("SELECT pe FROM PolicyEnrollment pe WHERE pe.enrollmentStatus = 'PENDING' AND pe.agent = :agent ORDER BY pe.enrolledDate ASC")
-    List<PolicyEnrollment> findPendingEnrollmentsByAgent(@Param("agent") User agent);
 
-    // Check if customer has any pending or agent-approved enrollment for a policy template
-    @Query("SELECT COUNT(pe) > 0 FROM PolicyEnrollment pe WHERE pe.customer = :customer AND pe.policyTemplate = :policyTemplate AND pe.enrollmentStatus IN ('PENDING', 'AGENT_APPROVED')")
-    boolean hasPendingOrAgentApprovedEnrollment(@Param("customer") User customer, @Param("policyTemplate") Policy policyTemplate);
+
+
+
 }

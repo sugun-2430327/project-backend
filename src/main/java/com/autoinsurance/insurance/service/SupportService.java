@@ -85,7 +85,7 @@ public class SupportService {
     /**
      * Get ticket details
      * - CUSTOMER: Can only view their own tickets
-     * - AGENT/ADMIN: Can view any ticket
+     * - ADMIN: Can view any ticket
      */
     public SupportTicketResponse getTicketDetails(Long ticketId, Principal principal) {
         User currentUser = getCurrentUser(principal);
@@ -103,14 +103,14 @@ public class SupportService {
     }
 
     /**
-     * Resolve a support ticket (AGENT/ADMIN only)
+     * Resolve a support ticket (ADMIN only)
      */
     public SupportTicketResponse resolveTicket(Long ticketId, TicketResolutionRequest request, Principal principal) {
         User currentUser = getCurrentUser(principal);
 
-        // Only agents and admins can resolve tickets
-        if (currentUser.getRole() == Role.CUSTOMER) {
-            throw new AccessDeniedException("Only agents and admins can resolve support tickets");
+        // Only admins can resolve tickets
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Only admins can resolve support tickets");
         }
 
         SupportTicket ticket = supportTicketRepository.findById(ticketId)
@@ -133,7 +133,7 @@ public class SupportService {
     /**
      * Get all tickets based on user role
      * - CUSTOMER: Gets only their own tickets
-     * - AGENT: Gets all tickets (to help with customer support)
+
      * - ADMIN: Gets all tickets
      */
     public List<SupportTicketResponse> getAllTickets(Principal principal) {
@@ -146,9 +146,8 @@ public class SupportService {
                 // Customers see only their own tickets
                 tickets = supportTicketRepository.findByUser(currentUser);
                 break;
-            case AGENT:
             case ADMIN:
-                // Agents and admins see all tickets
+                // Admins see all tickets
                 tickets = supportTicketRepository.findAllOrderByCreatedDateDesc();
                 break;
             default:
@@ -161,14 +160,14 @@ public class SupportService {
     }
 
     /**
-     * Get all open tickets (AGENT/ADMIN only)
+     * Get all open tickets (ADMIN only)
      */
     public List<SupportTicketResponse> getAllOpenTickets(Principal principal) {
         User currentUser = getCurrentUser(principal);
 
-        // Only agents and admins can view all open tickets
-        if (currentUser.getRole() == Role.CUSTOMER) {
-            throw new AccessDeniedException("Only agents and admins can view all open tickets");
+        // Only admins can view all open tickets
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Only admins can view all open tickets");
         }
 
         List<SupportTicket> openTickets = supportTicketRepository.findAllOpenTickets();
@@ -190,7 +189,7 @@ public class SupportService {
             // Customers see only their own tickets with the specified status
             tickets = supportTicketRepository.findByUserAndTicketStatus(currentUser, status);
         } else {
-            // Agents and admins see all tickets with the specified status
+            // Admins see all tickets with the specified status
             tickets = supportTicketRepository.findByTicketStatus(status);
         }
 
@@ -200,12 +199,12 @@ public class SupportService {
     }
 
     /**
-     * Get tickets resolved by current agent/admin
+     * Get tickets resolved by current admin
      */
     public List<SupportTicketResponse> getTicketsResolvedByMe(Principal principal) {
         User currentUser = getCurrentUser(principal);
 
-        // Only agents and admins can have resolved tickets
+        // Only admins can have resolved tickets
         if (currentUser.getRole() == Role.CUSTOMER) {
             throw new AccessDeniedException("Customers cannot access resolved ticket statistics");
         }

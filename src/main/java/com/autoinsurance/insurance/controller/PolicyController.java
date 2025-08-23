@@ -1,6 +1,5 @@
 package com.autoinsurance.insurance.controller;
 
-import com.autoinsurance.insurance.dto.ApprovalRequest;
 import com.autoinsurance.insurance.dto.PolicyRequest;
 import com.autoinsurance.insurance.dto.PolicyResponse;
 import com.autoinsurance.insurance.service.PolicyService;
@@ -24,10 +23,10 @@ public class PolicyController {
 
     /**
      * Create a new policy
-     * Allowed roles: ADMIN, AGENT
+     * Allowed roles: ADMIN
      */
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PolicyResponse> createPolicy(
             @Valid @RequestBody PolicyRequest policyRequest,
             Principal principal) {
@@ -41,10 +40,10 @@ public class PolicyController {
 
     /**
      * Update an existing policy
-     * Allowed roles: ADMIN, AGENT
+     * Allowed roles: ADMIN
      */
     @PutMapping("/{policyId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PolicyResponse> updatePolicy(
             @PathVariable Long policyId,
             @Valid @RequestBody PolicyRequest policyRequest,
@@ -60,11 +59,11 @@ public class PolicyController {
     /**
      * Get all policies based on user role (PROTECTED)
      * ADMIN: returns all policies
-     * AGENT: returns policies assigned to that agent
+
      * CUSTOMER: returns only the user's own policies
      */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<List<PolicyResponse>> getAllPolicies(Principal principal) {
         try {
             List<PolicyResponse> policies = policyService.fetchAllPolicies(principal);
@@ -77,11 +76,11 @@ public class PolicyController {
     /**
      * Get policy by ID (PROTECTED)
      * ADMIN: can access any policy
-     * AGENT: only if they're the servicing agent
+
      * CUSTOMER: only if it's their own policy
      */
     @GetMapping("/{policyId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PolicyResponse> getPolicyById(
             @PathVariable Long policyId,
             Principal principal) {
@@ -115,7 +114,7 @@ public class PolicyController {
      * Access control is same as getPolicyById
      */
     @GetMapping("/number/{policyNumber}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<PolicyResponse> getPolicyByNumber(
             @PathVariable String policyNumber,
             Principal principal) {
@@ -201,21 +200,7 @@ public class PolicyController {
             .body("This endpoint has moved. Please use /api/enrollments/pending");
     }
 
-    /**
-     * @deprecated Use PolicyEnrollmentController for approval operations
-     * This endpoint is kept for backward compatibility
-     */
-    @PutMapping("/{policyId}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Deprecated
-    public ResponseEntity<?> approvePolicy(
-            @PathVariable Long policyId,
-            @Valid @RequestBody ApprovalRequest approvalRequest,
-            Principal principal) {
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-            .header("Location", "/api/enrollments/" + policyId + "/approve")
-            .body("This endpoint has moved. Please use /api/enrollments/{enrollmentId}/approve");
-    }
+
 
     /**
      * @deprecated Use PolicyEnrollmentController for decline operations

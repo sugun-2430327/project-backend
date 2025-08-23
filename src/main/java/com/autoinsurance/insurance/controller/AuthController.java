@@ -3,6 +3,7 @@ package com.autoinsurance.insurance.controller;
 import com.autoinsurance.insurance.dto.JwtResponse;
 import com.autoinsurance.insurance.dto.LoginRequest;
 import com.autoinsurance.insurance.dto.RegisterRequest;
+import com.autoinsurance.insurance.model.Role;
 import com.autoinsurance.insurance.model.User;
 import com.autoinsurance.insurance.service.AuthService;
 import com.autoinsurance.insurance.service.FileUploadService;
@@ -38,16 +39,22 @@ public class AuthController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("email") String email,
+            @RequestParam(value = "role", defaultValue = "CUSTOMER") String role,
             @RequestParam(value = "incomePerAnnum", required = false) Double incomePerAnnum,
             @RequestParam(value = "idProof", required = false) MultipartFile idProofFile) {
         
         try {
+            // Validate role parameter
+            if (!"CUSTOMER".equalsIgnoreCase(role) && !"ADMIN".equalsIgnoreCase(role)) {
+                return ResponseEntity.badRequest().body("Invalid role. Allowed roles: CUSTOMER, ADMIN");
+            }
+            
             RegisterRequest registerRequest = new RegisterRequest();
             registerRequest.setUsername(username);
             registerRequest.setPassword(password);
             registerRequest.setEmail(email);
             registerRequest.setIncomePerAnnum(incomePerAnnum);
-            registerRequest.setRole(null); // Will default to CUSTOMER in service
+            registerRequest.setRole(Role.valueOf(role.toUpperCase()));
             
             // Handle file upload if provided
             if (idProofFile != null && !idProofFile.isEmpty()) {
@@ -67,9 +74,11 @@ public class AuthController {
     @PostMapping("/register-json")
     public ResponseEntity<?> registerJson(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
-            // Set default role if not provided
+            // Set default role if not provided or validate if provided
             if (registerRequest.getRole() == null) {
-                registerRequest.setRole(null); // Will default to CUSTOMER in service
+                registerRequest.setRole(Role.CUSTOMER); // Default to CUSTOMER
+            } else if (registerRequest.getRole() != Role.CUSTOMER && registerRequest.getRole() != Role.ADMIN) {
+                return ResponseEntity.badRequest().body("Invalid role. Allowed roles: CUSTOMER, ADMIN");
             }
             User user = authService.registerUser(registerRequest);
             return ResponseEntity.ok("User " + user.getUsername() + " registered successfully as " + user.getRole() + "!");

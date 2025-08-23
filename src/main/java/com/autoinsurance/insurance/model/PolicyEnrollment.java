@@ -21,11 +21,6 @@ public class PolicyEnrollment {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    // Foreign key to assigned Agent (null until approved)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id", nullable = true)
-    private User agent;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnrollmentStatus enrollmentStatus;
@@ -38,15 +33,6 @@ public class PolicyEnrollment {
 
     @Column(name = "declined_date")
     private LocalDateTime declinedDate;
-
-    @Column(name = "agent_approved_date")
-    private LocalDateTime agentApprovedDate;
-
-    @Column(name = "agent_declined_date")
-    private LocalDateTime agentDeclinedDate;
-
-    @Column(name = "agent_notes")
-    private String agentNotes;
 
     @Column(name = "admin_notes")
     private String adminNotes;
@@ -92,14 +78,6 @@ public class PolicyEnrollment {
         this.customer = customer;
     }
 
-    public User getAgent() {
-        return agent;
-    }
-
-    public void setAgent(User agent) {
-        this.agent = agent;
-    }
-
     public EnrollmentStatus getEnrollmentStatus() {
         return enrollmentStatus;
     }
@@ -132,30 +110,6 @@ public class PolicyEnrollment {
         this.declinedDate = declinedDate;
     }
 
-    public LocalDateTime getAgentApprovedDate() {
-        return agentApprovedDate;
-    }
-
-    public void setAgentApprovedDate(LocalDateTime agentApprovedDate) {
-        this.agentApprovedDate = agentApprovedDate;
-    }
-
-    public LocalDateTime getAgentDeclinedDate() {
-        return agentDeclinedDate;
-    }
-
-    public void setAgentDeclinedDate(LocalDateTime agentDeclinedDate) {
-        this.agentDeclinedDate = agentDeclinedDate;
-    }
-
-    public String getAgentNotes() {
-        return agentNotes;
-    }
-
-    public void setAgentNotes(String agentNotes) {
-        this.agentNotes = agentNotes;
-    }
-
     public String getAdminNotes() {
         return adminNotes;
     }
@@ -174,10 +128,9 @@ public class PolicyEnrollment {
 
     // Enum for enrollment status
     public enum EnrollmentStatus {
-        PENDING,            // Enrollment submitted, awaiting agent review
-        AGENT_APPROVED,     // Agent approved, awaiting admin review
+        PENDING,            // Enrollment submitted, awaiting admin review
         APPROVED,           // Admin approved, policy is active
-        DECLINED,           // Admin/Agent declined, user can re-enroll after some time
+        DECLINED,           // Admin declined, user can re-enroll after some time
         WITHDRAWN           // User cancelled their own enrollment
     }
 }

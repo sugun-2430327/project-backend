@@ -16,7 +16,7 @@ public class PolicyResponse {
     private LocalDate endDate;
     private String policyStatus;
     private String policyHolderName;
-    private String agentName;
+
 
     // Default constructor
     public PolicyResponse() {
@@ -33,9 +33,8 @@ public class PolicyResponse {
         this.startDate = policy.getStartDate();
         this.endDate = policy.getEndDate();
         this.policyStatus = policy.getPolicyStatus().name();
-        // Policy templates don't have policyHolder or agent - those are in PolicyEnrollment
+        // Policy templates don't have policyHolder - those are in PolicyEnrollment
         this.policyHolderName = null;
-        this.agentName = null;
     }
 
     // Getters and Setters
@@ -119,11 +118,5 @@ public class PolicyResponse {
         this.policyHolderName = policyHolderName;
     }
 
-    public String getAgentName() {
-        return agentName;
-    }
 
-    public void setAgentName(String agentName) {
-        this.agentName = agentName;
-    }
 }

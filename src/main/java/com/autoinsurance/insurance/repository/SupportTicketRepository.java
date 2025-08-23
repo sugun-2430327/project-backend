@@ -33,7 +33,7 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, Lo
     @Query("SELECT t FROM SupportTicket t WHERE t.ticketStatus = 'RESOLVED' ORDER BY t.resolvedDate DESC")
     List<SupportTicket> findAllResolvedTickets();
     
-    // Find tickets resolved by specific agent/admin
+    // Find tickets resolved by specific admin
     List<SupportTicket> findByResolvedBy(User resolvedBy);
     
     // Find all tickets ordered by creation date (most recent first)

@@ -58,8 +58,8 @@ public class PolicyEnrollmentService {
             throw new RuntimeException("You already have an approved policy for this template. Cannot enroll again.");
         }
 
-        // Check if customer already has a pending or agent-approved enrollment for this template
-        if (enrollmentRepository.hasPendingOrAgentApprovedEnrollment(currentUser, policyTemplate)) {
+        // Check if customer already has a pending enrollment for this template
+        if (enrollmentRepository.hasPendingEnrollment(currentUser, policyTemplate)) {
             throw new RuntimeException("You already have a pending enrollment for this template. Please wait for approval.");
         }
 
@@ -99,17 +99,8 @@ public class PolicyEnrollmentService {
             return new EnrollmentEligibilityResponse(false, "You already have an APPROVED policy for this template. Cannot enroll again.", "APPROVED");
         }
 
-        if (enrollmentRepository.hasPendingOrAgentApprovedEnrollment(currentUser, policyTemplate)) {
-            // Find the exact status
-            Optional<PolicyEnrollment> latestEnrollment = enrollmentRepository.findLatestEnrollmentByCustomerAndTemplate(currentUser, policyTemplate);
-            if (latestEnrollment.isPresent()) {
-                String status = latestEnrollment.get().getEnrollmentStatus().name();
-                if ("PENDING".equals(status)) {
-                    return new EnrollmentEligibilityResponse(false, "You have a PENDING enrollment awaiting agent review. Please wait for approval.", "PENDING");
-                } else if ("AGENT_APPROVED".equals(status)) {
-                    return new EnrollmentEligibilityResponse(false, "You have an AGENT_APPROVED enrollment awaiting admin decision. Please wait for final approval.", "AGENT_APPROVED");
-                }
-            }
+        if (enrollmentRepository.hasPendingEnrollment(currentUser, policyTemplate)) {
+            return new EnrollmentEligibilityResponse(false, "You have a PENDING enrollment awaiting admin review. Please wait for approval.", "PENDING");
         }
 
         // Check if user had previous declined or withdrawn enrollment (these allow re-enrollment)
@@ -128,81 +119,7 @@ public class PolicyEnrollmentService {
     }
 
     /**
-     * Agent reviews customer enrollment (approve or decline)
-     */
-    public PolicyEnrollmentResponse agentReviewEnrollment(Long enrollmentId, String action, String notes, Principal principal) {
-        User currentUser = getCurrentUser(principal);
-
-        // Only agents can review enrollments
-        if (currentUser.getRole() != Role.AGENT) {
-            throw new AccessDeniedException("Only agents can review enrollments");
-        }
-
-        PolicyEnrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
-
-        // Check if enrollment is pending agent review
-        if (enrollment.getEnrollmentStatus() != PolicyEnrollment.EnrollmentStatus.PENDING) {
-            throw new RuntimeException("Enrollment is not pending agent review");
-        }
-
-        if ("approve".equalsIgnoreCase(action)) {
-            // Agent approves - move to AGENT_APPROVED status for admin review
-            enrollment.setEnrollmentStatus(PolicyEnrollment.EnrollmentStatus.AGENT_APPROVED);
-            enrollment.setAgent(currentUser);
-            enrollment.setAgentApprovedDate(LocalDateTime.now());
-            enrollment.setAgentNotes(notes != null ? notes : "All details are correct, request can be approved");
-        } else if ("decline".equalsIgnoreCase(action)) {
-            // Agent declines - move to DECLINED status
-            enrollment.setEnrollmentStatus(PolicyEnrollment.EnrollmentStatus.DECLINED);
-            enrollment.setAgent(currentUser);
-            enrollment.setAgentDeclinedDate(LocalDateTime.now());
-            enrollment.setDeclinedDate(LocalDateTime.now()); // For backward compatibility
-            enrollment.setAgentNotes(notes != null ? notes : "Enrollment declined by agent");
-        } else {
-            throw new RuntimeException("Invalid action. Use 'approve' or 'decline'");
-        }
-
-        PolicyEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
-        return new PolicyEnrollmentResponse(savedEnrollment);
-    }
-
-    /**
-     * Get all pending enrollments for agent review
-     */
-    public List<PolicyEnrollmentResponse> getPendingEnrollmentsForAgent(Principal principal) {
-        User currentUser = getCurrentUser(principal);
-
-        // Only agents can view pending enrollments for review
-        if (currentUser.getRole() != Role.AGENT) {
-            throw new AccessDeniedException("Only agents can view pending enrollments");
-        }
-
-        List<PolicyEnrollment> pendingEnrollments = enrollmentRepository.findAllPendingEnrollments();
-        return pendingEnrollments.stream()
-                .map(PolicyEnrollmentResponse::new)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Get all agent-approved enrollments awaiting admin review
-     */
-    public List<PolicyEnrollmentResponse> getAgentApprovedEnrollments(Principal principal) {
-        User currentUser = getCurrentUser(principal);
-
-        // Only admins can view agent-approved enrollments
-        if (currentUser.getRole() != Role.ADMIN) {
-            throw new AccessDeniedException("Only admins can view agent-approved enrollments");
-        }
-
-        List<PolicyEnrollment> agentApprovedEnrollments = enrollmentRepository.findAllAgentApprovedEnrollments();
-        return agentApprovedEnrollments.stream()
-                .map(PolicyEnrollmentResponse::new)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Admin approves customer enrollment (now works with agent-approved enrollments)
+     * Admin approves customer enrollment
      */
     public PolicyEnrollmentResponse approveEnrollment(Long enrollmentId, String notes, Principal principal) {
         User currentUser = getCurrentUser(principal);
@@ -215,12 +132,12 @@ public class PolicyEnrollmentService {
         PolicyEnrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
 
-        // Check if enrollment is agent-approved and awaiting admin approval
-        if (enrollment.getEnrollmentStatus() != PolicyEnrollment.EnrollmentStatus.AGENT_APPROVED) {
-            throw new RuntimeException("Enrollment is not agent-approved and awaiting admin review");
+        // Check if enrollment is pending admin approval
+        if (enrollment.getEnrollmentStatus() != PolicyEnrollment.EnrollmentStatus.PENDING) {
+            throw new RuntimeException("Enrollment is not pending admin review");
         }
 
-        // Approve the enrollment (agent is already assigned from agent approval step)
+        // Approve the enrollment
         enrollment.setEnrollmentStatus(PolicyEnrollment.EnrollmentStatus.APPROVED);
         enrollment.setApprovedDate(LocalDateTime.now());
         enrollment.setAdminNotes(notes);
@@ -243,9 +160,9 @@ public class PolicyEnrollmentService {
         PolicyEnrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
 
-        // Check if enrollment is agent-approved and awaiting admin decision
-        if (enrollment.getEnrollmentStatus() != PolicyEnrollment.EnrollmentStatus.AGENT_APPROVED) {
-            throw new RuntimeException("Enrollment is not agent-approved and awaiting admin review");
+        // Check if enrollment is pending admin decision
+        if (enrollment.getEnrollmentStatus() != PolicyEnrollment.EnrollmentStatus.PENDING) {
+            throw new RuntimeException("Enrollment is not pending admin review");
         }
 
         // Decline the enrollment (user can re-enroll later)

@@ -124,7 +124,7 @@ public class Policy {
         this.policyStatus = policyStatus;
     }
 
-    // Policy holder and agent relationships moved to PolicyEnrollment table
+    // Policy holder relationships moved to PolicyEnrollment table
 
     public enum PolicyStatus {
         ACTIVE,      // Policy template is active and available for enrollment

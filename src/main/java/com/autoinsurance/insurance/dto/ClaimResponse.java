@@ -14,9 +14,9 @@ public class ClaimResponse {
     private BigDecimal claimAmount;
     private LocalDate claimDate;
     private ClaimStatus claimStatus;
-    private String agentUsername;
+    private String adminUsername;
     private String claimDescription;
-    private String agentNotes;
+    private String adminNotes;
 
     // Default constructor
     public ClaimResponse() {
@@ -25,8 +25,8 @@ public class ClaimResponse {
     // Constructor
     public ClaimResponse(Long claimId, Long policyEnrollmentId, String generatedPolicyNumber, 
                         String customerUsername, String customerEmail, BigDecimal claimAmount, 
-                        LocalDate claimDate, ClaimStatus claimStatus, String agentUsername, 
-                        String claimDescription, String agentNotes) {
+                        LocalDate claimDate, ClaimStatus claimStatus, String adminUsername, 
+                        String claimDescription, String adminNotes) {
         this.claimId = claimId;
         this.policyEnrollmentId = policyEnrollmentId;
         this.generatedPolicyNumber = generatedPolicyNumber;
@@ -35,9 +35,9 @@ public class ClaimResponse {
         this.claimAmount = claimAmount;
         this.claimDate = claimDate;
         this.claimStatus = claimStatus;
-        this.agentUsername = agentUsername;
+        this.adminUsername = adminUsername;
         this.claimDescription = claimDescription;
-        this.agentNotes = agentNotes;
+        this.adminNotes = adminNotes;
     }
 
     // Getters and Setters
@@ -105,12 +105,12 @@ public class ClaimResponse {
         this.claimStatus = claimStatus;
     }
 
-    public String getAgentUsername() {
-        return agentUsername;
+    public String getAdminUsername() {
+        return adminUsername;
     }
 
-    public void setAgentUsername(String agentUsername) {
-        this.agentUsername = agentUsername;
+    public void setAdminUsername(String adminUsername) {
+        this.adminUsername = adminUsername;
     }
 
     public String getClaimDescription() {
@@ -121,11 +121,11 @@ public class ClaimResponse {
         this.claimDescription = claimDescription;
     }
 
-    public String getAgentNotes() {
-        return agentNotes;
+    public String getAdminNotes() {
+        return adminNotes;
     }
 
-    public void setAgentNotes(String agentNotes) {
-        this.agentNotes = agentNotes;
+    public void setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
     }
 }

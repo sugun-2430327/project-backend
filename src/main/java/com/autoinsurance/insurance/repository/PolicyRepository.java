@@ -19,7 +19,7 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
     /*
      * ==========================================================================
-     * REMOVED METHODS - Policy entity no longer has policyHolder/agent fields
+     * REMOVED METHODS - Policy entity no longer has policyHolder fields
      * ==========================================================================
      * 
      * The following methods have been removed because the Policy entity has been
@@ -27,9 +27,9 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
      * PolicyEnrollment table:
      * 
      * - findByPolicyHolder(User policyHolder) - moved to PolicyEnrollmentRepository
-     * - findByAgent(User agent) - moved to PolicyEnrollmentRepository  
+
      * - existsByPolicyIdAndPolicyHolder(...) - no longer needed
-     * - existsByPolicyIdAndAgent(...) - no longer needed
+
      * - findAvailablePolicyTemplates() - use findAll() instead (all are templates)
      * - findEnrolledPolicies() - moved to PolicyEnrollmentRepository
      * ==========================================================================

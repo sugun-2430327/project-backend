@@ -76,48 +76,35 @@ public class ClaimService {
             case ADMIN:
                 // Admin can see all claims
                 break;
-            case AGENT:
-                // Agent can see claims for their assigned policies
-                if (claim.getPolicyEnrollment().getAgent() == null || 
-                    !claim.getPolicyEnrollment().getAgent().getUserId().equals(currentUser.getUserId())) {
-                    throw new AccessDeniedException("You can only view claims for your assigned policies");
-                }
-                break;
             case CUSTOMER:
                 // Customer can only see their own claims
                 if (!claim.getCustomer().getUserId().equals(currentUser.getUserId())) {
                     throw new AccessDeniedException("You can only view your own claims");
                 }
                 break;
+            default:
+                throw new AccessDeniedException("Invalid role for accessing claims");
         }
 
         return convertToResponse(claim);
     }
 
     /**
-     * Update claim status (ADMIN and AGENT only)
+     * Update claim status (ADMIN only)
      */
     public ClaimResponse updateClaimStatus(Long claimId, ClaimUpdateRequest updateRequest, Principal principal) {
         User currentUser = getCurrentUser(principal);
         Claim claim = claimRepository.findById(claimId)
                 .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
 
-        // Only ADMIN and AGENT can update claim status
-        if (currentUser.getRole() == Role.CUSTOMER) {
-            throw new AccessDeniedException("Customers cannot update claim status");
-        }
-
-        // For AGENT: they can only update claims for their assigned policies
-        if (currentUser.getRole() == Role.AGENT) {
-            if (claim.getPolicyEnrollment().getAgent() == null || 
-                !claim.getPolicyEnrollment().getAgent().getUserId().equals(currentUser.getUserId())) {
-                throw new AccessDeniedException("You can only update claims for your assigned policies");
-            }
+        // Only ADMIN can update claim status
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Only admins can update claim status");
         }
 
         // Update claim details
         claim.setClaimStatus(updateRequest.getClaimStatus());
-        claim.setAgentNotes(updateRequest.getAgentNotes());
+        claim.setAdminNotes(updateRequest.getAdminNotes());
 
         claim = claimRepository.save(claim);
         return convertToResponse(claim);
@@ -135,10 +122,6 @@ public class ClaimService {
                 // Admin can see all claims
                 claims = claimRepository.findAll();
                 break;
-            case AGENT:
-                // Agent can see claims for their assigned policies
-                claims = claimRepository.findByAgentId(currentUser.getUserId());
-                break;
             case CUSTOMER:
                 // Customer can only see their own claims
                 claims = claimRepository.findByCustomerId(currentUser.getUserId());
@@ -153,27 +136,17 @@ public class ClaimService {
     }
 
     /**
-     * Get claims by status (ADMIN and AGENT only)
+     * Get claims by status (ADMIN only)
      */
     public List<ClaimResponse> getClaimsByStatus(ClaimStatus status, Principal principal) {
         User currentUser = getCurrentUser(principal);
 
-        // Only ADMIN and AGENT can filter by status
-        if (currentUser.getRole() == Role.CUSTOMER) {
-            throw new AccessDeniedException("Customers cannot filter claims by status");
+        // Only ADMIN can filter by status
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Only admins can filter claims by status");
         }
 
         List<Claim> claims = claimRepository.findByClaimStatus(status);
-        
-        // Apply role-based filtering
-        if (currentUser.getRole() == Role.AGENT) {
-            claims = claims.stream()
-                    .filter(claim -> 
-                        (claim.getPolicyEnrollment().getAgent() != null && 
-                         claim.getPolicyEnrollment().getAgent().getUserId().equals(currentUser.getUserId()))
-                    )
-                    .collect(Collectors.toList());
-        }
 
         return claims.stream()
                 .map(this::convertToResponse)
@@ -193,9 +166,9 @@ public class ClaimService {
                 claim.getClaimAmount(),
                 claim.getClaimDate(),
                 claim.getClaimStatus(),
-                claim.getPolicyEnrollment().getAgent() != null ? claim.getPolicyEnrollment().getAgent().getUsername() : null,
+                null, // No agent assigned anymore
                 claim.getClaimDescription(),
-                claim.getAgentNotes()
+                claim.getAdminNotes()
         );
     }
 

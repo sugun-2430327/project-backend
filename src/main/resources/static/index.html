@@ -125,7 +125,6 @@
                     <h3>Test Endpoints</h3>
                     <button onclick="testEndpoint('all')">Public Content</button>
                     <button onclick="testEndpoint('customer')">Customer Content</button>
-                    <button onclick="testEndpoint('agent')">Agent Content</button>
                     <button onclick="testEndpoint('admin')">Admin Content</button>
                     <div id="endpointMessage" class="message"></div>
                 </div>
@@ -151,9 +150,16 @@
                     <label for="regRole">Role:</label>
                     <select id="regRole">
                         <option value="CUSTOMER">Customer</option>
-                        <option value="AGENT">Agent</option>
                         <option value="ADMIN">Admin</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="regIncome">Income Per Annum (Optional):</label>
+                    <input type="number" id="regIncome" step="0.01" placeholder="Enter annual income">
+                </div>
+                <div class="form-group">
+                    <label for="regIdProof">ID Proof (Optional):</label>
+                    <input type="file" id="regIdProof" accept=".pdf,.jpg,.jpeg,.png">
                 </div>
                 <button onclick="register()">Register</button>
                 <div id="registerMessage" class="message"></div>
@@ -198,7 +204,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ usernameOrEmail: username, password })
                 });
                 
                 const data = await response.json();
@@ -230,15 +236,29 @@
             const password = document.getElementById('regPassword').value;
             const email = document.getElementById('regEmail').value;
             const role = document.getElementById('regRole').value;
+            const income = document.getElementById('regIncome').value;
+            const idProofFile = document.getElementById('regIdProof').files[0];
             const messageDiv = document.getElementById('registerMessage');
             
             try {
+                // Use FormData to handle file upload
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('email', email);
+                formData.append('role', role);
+                
+                // Add optional fields only if they have values
+                if (income && income.trim() !== '') {
+                    formData.append('incomePerAnnum', parseFloat(income));
+                }
+                if (idProofFile) {
+                    formData.append('idProof', idProofFile);
+                }
+                
                 const response = await fetch('http://localhost:8090/api/auth/register', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password, email, role })
+                    body: formData // No Content-Type header needed for FormData
                 });
                 
                 const data = await response.text();

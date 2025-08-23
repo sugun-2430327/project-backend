@@ -28,22 +28,19 @@ public class PolicyService {
 
     /**
      * Create a new policy template
-     * Only ADMIN and AGENT can create policy templates
+     * Only ADMIN can create policy templates
      */
     public PolicyResponse validateCreatePolicy(PolicyRequest request, Principal principal) {
         User currentUser = getCurrentUser(principal);
         
-        // Only ADMIN and AGENT can create policy templates
+        // Only ADMIN can create policy templates
         if (currentUser.getRole() == Role.CUSTOMER) {
             throw new AccessDeniedException("Customers cannot create policies");
         }
         
-        // Reject requests with policy holder or agent assignments
+        // Reject requests with policy holder assignments
         if (request.getPolicyHolderId() != null) {
             throw new RuntimeException("Cannot assign policy holder during template creation. Use enrollment system instead.");
-        }
-        if (request.getAgentId() != null) {
-            throw new RuntimeException("Cannot assign agent during template creation. Agents are assigned during enrollment approval.");
         }
         
         // Create policy template
@@ -68,7 +65,7 @@ public class PolicyService {
     public PolicyResponse validateUpdatePolicy(Long policyId, PolicyRequest updates, Principal principal) {
         User currentUser = getCurrentUser(principal);
         
-        // Only ADMIN and AGENT can update policy templates
+        // Only ADMIN can update policy templates
         if (currentUser.getRole() == Role.CUSTOMER) {
             throw new AccessDeniedException("Customers cannot update policy templates");
         }

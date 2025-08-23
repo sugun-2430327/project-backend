@@ -41,7 +41,7 @@ public class Claim {
     private String claimDescription;
 
     @Column(columnDefinition = "TEXT")
-    private String agentNotes;
+    private String adminNotes;
 
     // Default constructor
     public Claim() {
@@ -124,11 +124,11 @@ public class Claim {
         this.claimDescription = claimDescription;
     }
 
-    public String getAgentNotes() {
-        return agentNotes;
+    public String getAdminNotes() {
+        return adminNotes;
     }
 
-    public void setAgentNotes(String agentNotes) {
-        this.agentNotes = agentNotes;
+    public void setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
     }
 }

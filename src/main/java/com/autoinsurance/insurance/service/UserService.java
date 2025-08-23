@@ -36,10 +36,6 @@ public class UserService {
         return user.map(User::getUserId).orElse(null);
     }
 
-    public List<User> getAllAgents() {
-        return userRepository.findByRole(Role.AGENT);
-    }
-
     public List<User> getAllCustomers() {
         return userRepository.findByRole(Role.CUSTOMER);
     }
@@ -62,14 +58,14 @@ public class UserService {
     }
     
     /**
-     * Get all users with detailed information - Admin and Agent access only
+     * Get all users with detailed information - Admin access only
      */
     public List<UserResponse> getAllUsersDetailed(Principal principal) {
         User currentUser = getCurrentUserFromPrincipal(principal);
         
-        // Check if user has permission (ADMIN or AGENT)
-        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.AGENT) {
-            throw new RuntimeException("Access denied. Only admins and agents can view user details.");
+        // Check if user has permission (ADMIN only)
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Access denied. Only admins can view user details.");
         }
         
         return userRepository.findAll().stream()
@@ -78,14 +74,14 @@ public class UserService {
     }
     
     /**
-     * Get user by ID with detailed information - Admin and Agent access only
+     * Get user by ID with detailed information - Admin access only
      */
     public UserResponse getUserDetailedById(Long userId, Principal principal) {
         User currentUser = getCurrentUserFromPrincipal(principal);
         
-        // Check if user has permission (ADMIN or AGENT)
-        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.AGENT) {
-            throw new RuntimeException("Access denied. Only admins and agents can view user details.");
+        // Check if user has permission (ADMIN only)
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Access denied. Only admins can view user details.");
         }
         
         User user = userRepository.findById(userId)
@@ -95,14 +91,14 @@ public class UserService {
     }
     
     /**
-     * Get all customers with detailed information - Admin and Agent access only
+     * Get all customers with detailed information - Admin access only
      */
     public List<UserResponse> getAllCustomersDetailed(Principal principal) {
         User currentUser = getCurrentUserFromPrincipal(principal);
         
-        // Check if user has permission (ADMIN or AGENT)
-        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.AGENT) {
-            throw new RuntimeException("Access denied. Only admins and agents can view customer details.");
+        // Check if user has permission (ADMIN only)
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Access denied. Only admins can view customer details.");
         }
         
         return userRepository.findByRole(Role.CUSTOMER).stream()

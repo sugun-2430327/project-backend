@@ -38,10 +38,10 @@ public class SupportController {
     /**
      * Get ticket details by ID
      * - Customers can only view their own tickets
-     * - Agents and admins can view any ticket
+     * - Admins can view any ticket
      */
     @GetMapping("/tickets/{id}")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     public ResponseEntity<SupportTicketResponse> getTicketDetails(
             @PathVariable Long id, 
             Principal principal) {
@@ -52,10 +52,10 @@ public class SupportController {
 
     /**
      * Resolve a support ticket
-     * Only agents and admins can resolve tickets
+     * Only admins can resolve tickets
      */
     @PutMapping("/tickets/{id}/resolve")
-    @PreAuthorize("hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SupportTicketResponse> resolveTicket(
             @PathVariable Long id, 
             @RequestBody TicketResolutionRequest request, 
@@ -68,10 +68,10 @@ public class SupportController {
     /**
      * Get all tickets based on user role
      * - Customers see only their own tickets
-     * - Agents and admins see all tickets
+     * - Admins see all tickets
      */
     @GetMapping("/tickets")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     public ResponseEntity<List<SupportTicketResponse>> getAllTickets(Principal principal) {
         
         List<SupportTicketResponse> tickets = supportService.getAllTickets(principal);
@@ -80,10 +80,10 @@ public class SupportController {
 
     /**
      * Get all open tickets
-     * Only agents and admins can access this
+     * Only admins can access this
      */
     @GetMapping("/tickets/open")
-    @PreAuthorize("hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SupportTicketResponse>> getAllOpenTickets(Principal principal) {
         
         List<SupportTicketResponse> openTickets = supportService.getAllOpenTickets(principal);
@@ -93,10 +93,10 @@ public class SupportController {
     /**
      * Get tickets by status
      * - Customers see only their own tickets with the specified status
-     * - Agents and admins see all tickets with the specified status
+     * - Admins see all tickets with the specified status
      */
     @GetMapping("/tickets/status/{status}")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     public ResponseEntity<List<SupportTicketResponse>> getTicketsByStatus(
             @PathVariable TicketStatus status, 
             Principal principal) {
@@ -106,10 +106,10 @@ public class SupportController {
     }
 
     /**
-     * Get tickets resolved by current agent/admin
+     * Get tickets resolved by current admin
      */
     @GetMapping("/tickets/resolved-by-me")
-    @PreAuthorize("hasRole('AGENT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SupportTicketResponse>> getTicketsResolvedByMe(Principal principal) {
         
         List<SupportTicketResponse> tickets = supportService.getTicketsResolvedByMe(principal);

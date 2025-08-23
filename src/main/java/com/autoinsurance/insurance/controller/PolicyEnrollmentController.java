@@ -1,6 +1,6 @@
 package com.autoinsurance.insurance.controller;
 
-import com.autoinsurance.insurance.dto.AgentActionRequest;
+
 import com.autoinsurance.insurance.dto.EnrollmentEligibilityResponse;
 import com.autoinsurance.insurance.dto.PolicyEnrollmentResponse;
 import com.autoinsurance.insurance.service.PolicyEnrollmentService;
@@ -50,59 +50,6 @@ public class PolicyEnrollmentController {
             return ResponseEntity.ok(pendingEnrollments);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch pending enrollments: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get all pending enrollments for agent review
-     * Allowed roles: AGENT only
-     */
-    @GetMapping("/agent/pending")
-    @PreAuthorize("hasRole('AGENT')")
-    public ResponseEntity<List<PolicyEnrollmentResponse>> getPendingEnrollmentsForAgent(Principal principal) {
-        try {
-            List<PolicyEnrollmentResponse> pendingEnrollments = enrollmentService.getPendingEnrollmentsForAgent(principal);
-            return ResponseEntity.ok(pendingEnrollments);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch pending enrollments for agent review: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Agent reviews enrollment (approve or decline)
-     * Allowed roles: AGENT only
-     */
-    @PutMapping("/{enrollmentId}/agent-review")
-    @PreAuthorize("hasRole('AGENT')")
-    public ResponseEntity<PolicyEnrollmentResponse> agentReviewEnrollment(
-            @PathVariable Long enrollmentId,
-            @RequestBody AgentActionRequest actionRequest,
-            Principal principal) {
-        try {
-            PolicyEnrollmentResponse reviewedEnrollment = enrollmentService.agentReviewEnrollment(
-                enrollmentId, 
-                actionRequest.getAction(), 
-                actionRequest.getNotes(), 
-                principal
-            );
-            return ResponseEntity.ok(reviewedEnrollment);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to review enrollment: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get all agent-approved enrollments awaiting admin review
-     * Allowed roles: ADMIN only
-     */
-    @GetMapping("/agent-approved")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PolicyEnrollmentResponse>> getAgentApprovedEnrollments(Principal principal) {
-        try {
-            List<PolicyEnrollmentResponse> agentApprovedEnrollments = enrollmentService.getAgentApprovedEnrollments(principal);
-            return ResponseEntity.ok(agentApprovedEnrollments);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch agent-approved enrollments: " + e.getMessage());
         }
     }
 
@@ -157,7 +104,7 @@ public class PolicyEnrollmentController {
     }
 
     /**
-     * Admin approves customer enrollment (agent already assigned from agent review)
+     * Admin approves customer enrollment
      * Allowed roles: ADMIN only
      */
     @PutMapping("/{enrollmentId}/approve")
@@ -198,7 +145,7 @@ public class PolicyEnrollmentController {
 
     /**
      * Get all policy enrollments with comprehensive details (Admin only)
-     * Includes customer names, agent names, policy template details
+     * Includes customer names and policy template details
      * Allowed roles: ADMIN only
      */
     @GetMapping

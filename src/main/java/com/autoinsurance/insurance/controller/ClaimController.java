@@ -42,10 +42,10 @@ public class ClaimController {
 
     /**
      * Get claim details by ID
-     * Allowed roles: ADMIN, AGENT, CUSTOMER (with access control)
+     * Allowed roles: ADMIN, CUSTOMER (with access control)
      */
     @GetMapping("/{claimId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<ClaimResponse> getClaimDetails(
             @PathVariable Long claimId,
             Principal principal) {
@@ -59,10 +59,10 @@ public class ClaimController {
 
     /**
      * Update claim status
-     * Allowed roles: ADMIN, AGENT
+     * Allowed roles: ADMIN
      */
     @PutMapping("/{claimId}/status")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClaimResponse> updateClaimStatus(
             @PathVariable Long claimId,
             @Valid @RequestBody ClaimUpdateRequest updateRequest,
@@ -77,10 +77,10 @@ public class ClaimController {
 
     /**
      * Get all claims (with role-based filtering)
-     * Allowed roles: ADMIN, AGENT, CUSTOMER
+     * Allowed roles: ADMIN, CUSTOMER
      */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<List<ClaimResponse>> getAllClaims(Principal principal) {
         try {
             List<ClaimResponse> response = claimService.getAllClaims(principal);
@@ -92,10 +92,10 @@ public class ClaimController {
 
     /**
      * Get claims by status
-     * Allowed roles: ADMIN, AGENT
+     * Allowed roles: ADMIN
      */
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ClaimResponse>> getClaimsByStatus(
             @PathVariable ClaimStatus status,
             Principal principal) {
@@ -109,10 +109,10 @@ public class ClaimController {
 
     /**
      * Get customer's claims
-     * Allowed roles: CUSTOMER, AGENT, ADMIN
+     * Allowed roles: CUSTOMER, ADMIN
      */
     @GetMapping("/customer/{customerId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or (hasRole('CUSTOMER') and #customerId == authentication.principal.userId)")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and #customerId == authentication.principal.userId)")
     public ResponseEntity<List<ClaimResponse>> getCustomerClaims(
             @PathVariable Long customerId,
             Principal principal) {

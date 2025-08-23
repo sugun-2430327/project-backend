@@ -42,7 +42,7 @@ public class SupportTicket {
     @Column(columnDefinition = "TEXT")
     private String resolution;
 
-    // Agent/Admin who resolved the ticket
+    // Admin who resolved the ticket
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resolved_by")
     private User resolvedBy;

@@ -10,14 +10,12 @@ public class PolicyEnrollmentResponse {
     private String policyTemplateNumber;
     private String customerName;
     private String customerEmail;
-    private String agentName;
+
     private String enrollmentStatus;
     private LocalDateTime enrolledDate;
     private LocalDateTime approvedDate;
     private LocalDateTime declinedDate;
-    private LocalDateTime agentApprovedDate;
-    private LocalDateTime agentDeclinedDate;
-    private String agentNotes;
+
     private String adminNotes;
     private String generatedPolicyNumber;
 
@@ -38,14 +36,12 @@ public class PolicyEnrollmentResponse {
         this.policyTemplateNumber = enrollment.getPolicyTemplate().getPolicyNumber();
         this.customerName = enrollment.getCustomer().getUsername();
         this.customerEmail = enrollment.getCustomer().getEmail();
-        this.agentName = enrollment.getAgent() != null ? enrollment.getAgent().getUsername() : null;
+
         this.enrollmentStatus = enrollment.getEnrollmentStatus().name();
         this.enrolledDate = enrollment.getEnrolledDate();
         this.approvedDate = enrollment.getApprovedDate();
         this.declinedDate = enrollment.getDeclinedDate();
-        this.agentApprovedDate = enrollment.getAgentApprovedDate();
-        this.agentDeclinedDate = enrollment.getAgentDeclinedDate();
-        this.agentNotes = enrollment.getAgentNotes();
+
         this.adminNotes = enrollment.getAdminNotes();
         this.generatedPolicyNumber = enrollment.getGeneratedPolicyNumber();
 
@@ -97,13 +93,7 @@ public class PolicyEnrollmentResponse {
         this.customerEmail = customerEmail;
     }
 
-    public String getAgentName() {
-        return agentName;
-    }
 
-    public void setAgentName(String agentName) {
-        this.agentName = agentName;
-    }
 
     public String getEnrollmentStatus() {
         return enrollmentStatus;
@@ -137,29 +127,7 @@ public class PolicyEnrollmentResponse {
         this.declinedDate = declinedDate;
     }
 
-    public LocalDateTime getAgentApprovedDate() {
-        return agentApprovedDate;
-    }
 
-    public void setAgentApprovedDate(LocalDateTime agentApprovedDate) {
-        this.agentApprovedDate = agentApprovedDate;
-    }
-
-    public LocalDateTime getAgentDeclinedDate() {
-        return agentDeclinedDate;
-    }
-
-    public void setAgentDeclinedDate(LocalDateTime agentDeclinedDate) {
-        this.agentDeclinedDate = agentDeclinedDate;
-    }
-
-    public String getAgentNotes() {
-        return agentNotes;
-    }
-
-    public void setAgentNotes(String agentNotes) {
-        this.agentNotes = agentNotes;
-    }
 
     public String getAdminNotes() {
         return adminNotes;

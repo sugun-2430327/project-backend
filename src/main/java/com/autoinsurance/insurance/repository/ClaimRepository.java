@@ -23,9 +23,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
     @Query("SELECT c FROM Claim c WHERE c.policyEnrollment.enrollmentId = :enrollmentId")
     List<Claim> findByPolicyEnrollmentId(@Param("enrollmentId") Long enrollmentId);
 
-    // Find claims assigned to an agent (through policy enrollment's agent)
-    @Query("SELECT c FROM Claim c WHERE c.policyEnrollment.agent.userId = :agentId")
-    List<Claim> findByAgentId(@Param("agentId") Long agentId);
+
 
     // Count claims by status
     long countByClaimStatus(ClaimStatus claimStatus);

@@ -72,7 +72,7 @@ const Login = () => {
           <h3>Test Endpoints</h3>
           <button onClick={() => handleTestEndpoint('all')}>Public Content</button>
           <button onClick={() => handleTestEndpoint('customer')}>Customer Content</button>
-          <button onClick={() => handleTestEndpoint('agent')}>Agent Content</button>
+
           <button onClick={() => handleTestEndpoint('admin')}>Admin Content</button>
         </div>
       )}

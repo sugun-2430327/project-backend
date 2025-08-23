@@ -31,10 +31,10 @@ public class FileController {
 
     /**
      * View file in browser (for images/PDFs)
-     * Only accessible by ADMIN and AGENT roles
+     * Only accessible by ADMIN role
      */
     @GetMapping("/view/{fileName:.+}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Resource> viewFile(@PathVariable String fileName, Principal principal) {
         try {
             // Validate user permissions
@@ -68,10 +68,10 @@ public class FileController {
 
     /**
      * Download file
-     * Only accessible by ADMIN and AGENT roles
+     * Only accessible by ADMIN role
      */
     @GetMapping("/download/{fileName:.+}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, Principal principal) {
         try {
             // Validate user permissions
@@ -98,10 +98,10 @@ public class FileController {
 
     /**
      * Get file by full path (extracts filename from path)
-     * Only accessible by ADMIN and AGENT roles
+     * Only accessible by ADMIN role
      */
     @GetMapping("/view-by-path")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Resource> viewFileByPath(@RequestParam String filePath, Principal principal) {
         try {
             // Extract filename from path
@@ -114,10 +114,10 @@ public class FileController {
 
     /**
      * Download file by full path (extracts filename from path)
-     * Only accessible by ADMIN and AGENT roles
+     * Only accessible by ADMIN role
      */
     @GetMapping("/download-by-path")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Resource> downloadFileByPath(@RequestParam String filePath, Principal principal) {
         try {
             // Extract filename from path
@@ -135,17 +135,17 @@ public class FileController {
         User currentUser = userService.getUserByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.AGENT) {
-            throw new RuntimeException("Access denied. Only admins and agents can access uploaded files.");
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Access denied. Only admins can access uploaded files.");
         }
     }
 
     /**
      * Check if file exists
-     * Only accessible by ADMIN and AGENT roles
+     * Only accessible by ADMIN role
      */
     @GetMapping("/exists/{fileName:.+}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Boolean> fileExists(@PathVariable String fileName, Principal principal) {
         try {
             validateUserAccess(principal);

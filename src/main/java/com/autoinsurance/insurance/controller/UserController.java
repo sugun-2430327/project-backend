@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173", "http://localhost:4200"})
 @RestController
@@ -19,53 +18,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Get current user profile
+     */
     @GetMapping("/profile")
     public ResponseEntity<User> getCurrentUserProfile() {
         User user = userService.getCurrentUser();
         return ResponseEntity.ok(user);
-    }
-
-    @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN') or hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/agents")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT') or hasRole('CUSTOMER')")
-    public ResponseEntity<List<UserResponse>> getAllAgents() {
-        try {
-            List<User> agents = userService.getAllAgents();
-            List<UserResponse> agentResponses = agents.stream()
-                .map(UserResponse::new)
-                .collect(Collectors.toList());
-            return ResponseEntity.ok(agentResponses);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch agents: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/customers")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
-    public ResponseEntity<List<UserResponse>> getAllCustomers() {
-        try {
-            List<User> customers = userService.getAllCustomers();
-            List<UserResponse> customerResponses = customers.stream()
-                .map(UserResponse::new)
-                .collect(Collectors.toList());
-            return ResponseEntity.ok(customerResponses);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch customers: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or hasRole('ADMIN')")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -77,10 +36,10 @@ public class UserController {
     
     /**
      * Get all users with detailed information including income and ID proof
-     * Admin and Agent access only
+     * Admin access only
      */
     @GetMapping("/detailed")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getAllUsersDetailed(Principal principal) {
         try {
             List<UserResponse> users = userService.getAllUsersDetailed(principal);
@@ -92,10 +51,10 @@ public class UserController {
     
     /**
      * Get specific user with detailed information including income and ID proof
-     * Admin and Agent access only
+     * Admin access only
      */
     @GetMapping("/detailed/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> getUserDetailed(@PathVariable Long userId, Principal principal) {
         try {
             UserResponse user = userService.getUserDetailedById(userId, principal);
@@ -107,10 +66,10 @@ public class UserController {
     
     /**
      * Get all customers with detailed information including income and ID proof
-     * Admin and Agent access only
+     * Admin access only
      */
     @GetMapping("/customers/detailed")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('AGENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getAllCustomersDetailed(Principal principal) {
         try {
             List<UserResponse> customers = userService.getAllCustomersDetailed(principal);
@@ -120,10 +79,5 @@ public class UserController {
         }
     }
     
-    // Temporary endpoint to check registered users - remove in production
-    @GetMapping("/check-registrations")
-    public ResponseEntity<List<User>> checkRegistrations() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
+
 }

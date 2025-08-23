@@ -9,17 +9,17 @@ public class ClaimUpdateRequest {
     @NotNull(message = "Claim status is required")
     private ClaimStatus claimStatus;
 
-    @Size(max = 1000, message = "Agent notes cannot exceed 1000 characters")
-    private String agentNotes;
+    @Size(max = 1000, message = "Admin notes cannot exceed 1000 characters")
+    private String adminNotes;
 
     // Default constructor
     public ClaimUpdateRequest() {
     }
 
     // Constructor
-    public ClaimUpdateRequest(ClaimStatus claimStatus, String agentNotes) {
+    public ClaimUpdateRequest(ClaimStatus claimStatus, String adminNotes) {
         this.claimStatus = claimStatus;
-        this.agentNotes = agentNotes;
+        this.adminNotes = adminNotes;
     }
 
     // Getters and Setters
@@ -31,11 +31,11 @@ public class ClaimUpdateRequest {
         this.claimStatus = claimStatus;
     }
 
-    public String getAgentNotes() {
-        return agentNotes;
+    public String getAdminNotes() {
+        return adminNotes;
     }
 
-    public void setAgentNotes(String agentNotes) {
-        this.agentNotes = agentNotes;
+    public void setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
     }
 }
