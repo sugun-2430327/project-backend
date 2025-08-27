@@ -1,7 +1,7 @@
 package com.autoinsurance.insurance.controller;
 
-
 import com.autoinsurance.insurance.dto.EnrollmentEligibilityResponse;
+import com.autoinsurance.insurance.dto.EnrollmentRequest;
 import com.autoinsurance.insurance.dto.PolicyEnrollmentResponse;
 import com.autoinsurance.insurance.service.PolicyEnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,18 @@ public class PolicyEnrollmentController {
 
     /**
      * Customer enrolls in a policy template
+     * Accepts optional vehicle details in request body
      * Allowed roles: CUSTOMER only
      */
     @PostMapping("/{policyTemplateId}/enroll")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<PolicyEnrollmentResponse> enrollInPolicyTemplate(
             @PathVariable Long policyTemplateId,
+            @RequestBody(required = false) EnrollmentRequest enrollmentRequest,
             Principal principal) {
         try {
-            PolicyEnrollmentResponse enrollment = enrollmentService.enrollInPolicyTemplate(policyTemplateId, principal);
+            String vehicleDetails = (enrollmentRequest != null) ? enrollmentRequest.getVehicleDetails() : null;
+            PolicyEnrollmentResponse enrollment = enrollmentService.enrollInPolicyTemplate(policyTemplateId, vehicleDetails, principal);
             return ResponseEntity.status(HttpStatus.CREATED).body(enrollment);
         } catch (Exception e) {
             throw new RuntimeException("Failed to enroll in policy template: " + e.getMessage());

@@ -70,6 +70,8 @@ public class AuthService {
 
         // Create new user with all fields
         User user = new User(
+                registerRequest.getFirstName(),
+                registerRequest.getLastName(),
                 registerRequest.getUsername(),
                 passwordEncoder.encode(registerRequest.getPassword()),
                 registerRequest.getEmail(),

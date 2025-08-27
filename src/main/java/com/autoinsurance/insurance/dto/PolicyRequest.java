@@ -9,8 +9,8 @@ public class PolicyRequest {
     @NotBlank(message = "Policy number is required")
     private String policyNumber;
 
-    @NotBlank(message = "Vehicle details are required")
-    private String vehicleDetails;
+    @NotBlank(message = "Vehicle type is required")
+    private String vehicleType;
 
     @NotNull(message = "Coverage amount is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Coverage amount must be greater than 0")
@@ -51,12 +51,12 @@ public class PolicyRequest {
         this.policyNumber = policyNumber;
     }
 
-    public String getVehicleDetails() {
-        return vehicleDetails;
+    public String getVehicleType() {
+        return vehicleType;
     }
 
-    public void setVehicleDetails(String vehicleDetails) {
-        this.vehicleDetails = vehicleDetails;
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public BigDecimal getCoverageAmount() {

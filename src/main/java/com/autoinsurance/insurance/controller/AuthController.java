@@ -36,6 +36,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("email") String email,
@@ -50,6 +52,8 @@ public class AuthController {
             }
             
             RegisterRequest registerRequest = new RegisterRequest();
+            registerRequest.setFirstName(firstName);
+            registerRequest.setLastName(lastName);
             registerRequest.setUsername(username);
             registerRequest.setPassword(password);
             registerRequest.setEmail(email);

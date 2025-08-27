@@ -33,10 +33,12 @@ public class PolicyEnrollmentService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     /**
-     * Customer enrolls in a policy template
+     * Customer enrolls in a policy template with vehicle details
      */
-    public PolicyEnrollmentResponse enrollInPolicyTemplate(Long policyTemplateId, Principal principal) {
+    public PolicyEnrollmentResponse enrollInPolicyTemplate(Long policyTemplateId, String vehicleDetails, Principal principal) {
         User currentUser = getCurrentUser(principal);
 
         // Only customers can enroll in policies
@@ -66,11 +68,19 @@ public class PolicyEnrollmentService {
         // Generate unique policy number for this enrollment
         String generatedPolicyNumber = generateUniquePolicyNumber(policyTemplate.getPolicyNumber());
 
-        // Create enrollment record
-        PolicyEnrollment enrollment = new PolicyEnrollment(policyTemplate, currentUser, generatedPolicyNumber);
-        PolicyEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
-
-        return new PolicyEnrollmentResponse(savedEnrollment);
+        // Create enrollment record with vehicle details
+        PolicyEnrollment enrollment = new PolicyEnrollment(policyTemplate, currentUser, generatedPolicyNumber, vehicleDetails);
+        
+        try {
+            PolicyEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
+            return new PolicyEnrollmentResponse(savedEnrollment);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // Handle unique constraint violation for vehicle_details
+            if (e.getMessage().contains("vehicle_details")) {
+                throw new RuntimeException("This vehicle is already enrolled in the insurance system. Each vehicle can only be enrolled once.");
+            }
+            throw e; // Re-throw if it's a different constraint violation
+        }
     }
 
     /**

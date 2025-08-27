@@ -46,7 +46,7 @@ public class PolicyService {
         // Create policy template
         Policy policy = new Policy(
             request.getPolicyNumber(),
-            request.getVehicleDetails(),
+            request.getVehicleType(),
             request.getCoverageAmount(),
             request.getCoverageType(),
             request.getPremiumAmount(),
@@ -74,7 +74,7 @@ public class PolicyService {
             .orElseThrow(() -> new RuntimeException("Policy template not found"));
         
         // Update policy template fields
-        existingPolicy.setVehicleDetails(updates.getVehicleDetails());
+        existingPolicy.setVehicleType(updates.getVehicleType());
         existingPolicy.setCoverageAmount(updates.getCoverageAmount());
         existingPolicy.setCoverageType(updates.getCoverageType());
         existingPolicy.setPremiumAmount(updates.getPremiumAmount());

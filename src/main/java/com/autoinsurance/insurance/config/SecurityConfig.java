@@ -83,14 +83,6 @@ public class SecurityConfig {
             "http://localhost:*",     // Allow any localhost port for development
             "http://127.0.0.1:*"      // Allow any 127.0.0.1 port for development
         ));
-        // Alternative: Use specific origins if you prefer
-        // configuration.setAllowedOrigins(Arrays.asList(
-        //     "http://localhost:3000",  // React default port
-        //     "http://localhost:8090",  // Current backend port
-        //     "http://localhost:5173",  // Vite default port
-        //     "http://localhost:5174",  // Alternative Vite port
-        //     "http://localhost:4200"   // Angular default port
-        // ));
         configuration.setAllowedMethods(Arrays.asList("*")); // Allow all HTTP methods
         configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));

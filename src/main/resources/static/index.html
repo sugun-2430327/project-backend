@@ -135,6 +135,14 @@
             <div class="form-container">
                 <h2>Register</h2>
                 <div class="form-group">
+                    <label for="regFirstName">First Name:</label>
+                    <input type="text" id="regFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regLastName">Last Name:</label>
+                    <input type="text" id="regLastName" required>
+                </div>
+                <div class="form-group">
                     <label for="regUsername">Username:</label>
                     <input type="text" id="regUsername" required>
                 </div>
@@ -232,6 +240,8 @@
         }
         
         async function register() {
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
             const username = document.getElementById('regUsername').value;
             const password = document.getElementById('regPassword').value;
             const email = document.getElementById('regEmail').value;
@@ -243,6 +253,8 @@
             try {
                 // Use FormData to handle file upload
                 const formData = new FormData();
+                formData.append('firstName', firstName);
+                formData.append('lastName', lastName);
                 formData.append('username', username);
                 formData.append('password', password);
                 formData.append('email', email);
@@ -326,9 +338,13 @@
                 if (response.ok) {
                     messageDiv.innerHTML = `
                         <p><strong>User ID:</strong> ${data.userId}</p>
+                        <p><strong>First Name:</strong> ${data.firstName || 'N/A'}</p>
+                        <p><strong>Last Name:</strong> ${data.lastName || 'N/A'}</p>
                         <p><strong>Username:</strong> ${data.username}</p>
                         <p><strong>Email:</strong> ${data.email}</p>
                         <p><strong>Role:</strong> ${data.role}</p>
+                        <p><strong>Income Per Annum:</strong> ${data.incomePerAnnum || 'N/A'}</p>
+                        <p><strong>ID Proof File:</strong> ${data.idProofFilePath || 'N/A'}</p>
                     `;
                     messageDiv.className = 'message success';
                 } else {

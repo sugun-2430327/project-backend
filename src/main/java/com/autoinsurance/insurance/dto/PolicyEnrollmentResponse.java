@@ -19,8 +19,11 @@ public class PolicyEnrollmentResponse {
     private String adminNotes;
     private String generatedPolicyNumber;
 
-    // Policy template details
+    // Customer-specific enrollment details
     private String vehicleDetails;
+
+    // Policy template details
+    private String vehicleType;
     private Double coverageAmount;
     private String coverageType;
     private Double premiumAmount;
@@ -45,8 +48,11 @@ public class PolicyEnrollmentResponse {
         this.adminNotes = enrollment.getAdminNotes();
         this.generatedPolicyNumber = enrollment.getGeneratedPolicyNumber();
 
+        // Customer-specific enrollment details
+        this.vehicleDetails = enrollment.getVehicleDetails();
+
         // Policy template details
-        this.vehicleDetails = enrollment.getPolicyTemplate().getVehicleDetails();
+        this.vehicleType = enrollment.getPolicyTemplate().getVehicleType();
         this.coverageAmount = enrollment.getPolicyTemplate().getCoverageAmount().doubleValue();
         this.coverageType = enrollment.getPolicyTemplate().getCoverageType();
         this.premiumAmount = enrollment.getPolicyTemplate().getPremiumAmount().doubleValue();
@@ -151,6 +157,14 @@ public class PolicyEnrollmentResponse {
 
     public void setVehicleDetails(String vehicleDetails) {
         this.vehicleDetails = vehicleDetails;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public Double getCoverageAmount() {

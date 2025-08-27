@@ -5,6 +5,8 @@ import com.autoinsurance.insurance.model.User;
 public class UserResponse {
 
     private Long userId;
+    private String firstName;
+    private String lastName;
     private String username;
     private String email;
     private String role;
@@ -18,6 +20,8 @@ public class UserResponse {
     // Constructor from User entity
     public UserResponse(User user) {
         this.userId = user.getUserId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.role = user.getRole().name();
@@ -32,6 +36,22 @@ public class UserResponse {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUsername() {

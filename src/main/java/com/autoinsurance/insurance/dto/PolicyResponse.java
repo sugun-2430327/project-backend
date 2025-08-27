@@ -8,7 +8,7 @@ public class PolicyResponse {
 
     private Long policyId;
     private String policyNumber;
-    private String vehicleDetails;
+    private String vehicleType;
     private BigDecimal coverageAmount;
     private String coverageType;
     private BigDecimal premiumAmount;
@@ -26,7 +26,7 @@ public class PolicyResponse {
     public PolicyResponse(Policy policy) {
         this.policyId = policy.getPolicyId();
         this.policyNumber = policy.getPolicyNumber();
-        this.vehicleDetails = policy.getVehicleDetails();
+        this.vehicleType = policy.getVehicleType();
         this.coverageAmount = policy.getCoverageAmount();
         this.coverageType = policy.getCoverageType();
         this.premiumAmount = policy.getPremiumAmount();
@@ -54,12 +54,12 @@ public class PolicyResponse {
         this.policyNumber = policyNumber;
     }
 
-    public String getVehicleDetails() {
-        return vehicleDetails;
+    public String getVehicleType() {
+        return vehicleType;
     }
 
-    public void setVehicleDetails(String vehicleDetails) {
-        this.vehicleDetails = vehicleDetails;
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public BigDecimal getCoverageAmount() {

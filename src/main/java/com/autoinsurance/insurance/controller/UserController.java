@@ -22,9 +22,9 @@ public class UserController {
      * Get current user profile
      */
     @GetMapping("/profile")
-    public ResponseEntity<User> getCurrentUserProfile() {
+    public ResponseEntity<UserResponse> getCurrentUserProfile() {
         User user = userService.getCurrentUser();
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new UserResponse(user));
     }
 
     @DeleteMapping("/{id}")

@@ -15,8 +15,8 @@ public class Policy {
     @Column(nullable = false, length = 50)
     private String policyNumber;
 
-    @Column(columnDefinition = "TEXT")
-    private String vehicleDetails;
+    @Column(name = "vehicle_type", columnDefinition = "TEXT")
+    private String vehicleType;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal coverageAmount;
@@ -39,10 +39,10 @@ public class Policy {
     }
 
     // Constructor
-    public Policy(String policyNumber, String vehicleDetails, BigDecimal coverageAmount, String coverageType,
+    public Policy(String policyNumber, String vehicleType, BigDecimal coverageAmount, String coverageType,
                   BigDecimal premiumAmount, LocalDate startDate, LocalDate endDate, PolicyStatus policyStatus) {
         this.policyNumber = policyNumber;
-        this.vehicleDetails = vehicleDetails;
+        this.vehicleType = vehicleType;
         this.coverageAmount = coverageAmount;
         this.coverageType = coverageType;
         this.premiumAmount = premiumAmount;
@@ -68,12 +68,12 @@ public class Policy {
         this.policyNumber = policyNumber;
     }
 
-    public String getVehicleDetails() {
-        return vehicleDetails;
+    public String getVehicleType() {
+        return vehicleType;
     }
 
-    public void setVehicleDetails(String vehicleDetails) {
-        this.vehicleDetails = vehicleDetails;
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public BigDecimal getCoverageAmount() {

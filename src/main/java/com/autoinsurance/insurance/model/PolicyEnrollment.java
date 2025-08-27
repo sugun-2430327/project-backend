@@ -40,6 +40,9 @@ public class PolicyEnrollment {
     @Column(name = "generated_policy_number")
     private String generatedPolicyNumber; // Policy number generated for this enrollment
 
+    @Column(name = "vehicle_details", length = 500, unique = true)
+    private String vehicleDetails; // Customer-specific vehicle information (must be unique)
+
     // Default constructor
     public PolicyEnrollment() {
     }
@@ -51,6 +54,16 @@ public class PolicyEnrollment {
         this.enrollmentStatus = EnrollmentStatus.PENDING;
         this.enrolledDate = LocalDateTime.now();
         this.generatedPolicyNumber = generatedPolicyNumber;
+    }
+
+    // Constructor with vehicle details
+    public PolicyEnrollment(Policy policyTemplate, User customer, String generatedPolicyNumber, String vehicleDetails) {
+        this.policyTemplate = policyTemplate;
+        this.customer = customer;
+        this.enrollmentStatus = EnrollmentStatus.PENDING;
+        this.enrolledDate = LocalDateTime.now();
+        this.generatedPolicyNumber = generatedPolicyNumber;
+        this.vehicleDetails = vehicleDetails;
     }
 
     // Getters and Setters
@@ -124,6 +137,14 @@ public class PolicyEnrollment {
 
     public void setGeneratedPolicyNumber(String generatedPolicyNumber) {
         this.generatedPolicyNumber = generatedPolicyNumber;
+    }
+
+    public String getVehicleDetails() {
+        return vehicleDetails;
+    }
+
+    public void setVehicleDetails(String vehicleDetails) {
+        this.vehicleDetails = vehicleDetails;
     }
 
     // Enum for enrollment status

@@ -7,6 +7,14 @@ import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
     @NotBlank
+    @Size(max = 50)
+    private String firstName;
+
+    @NotBlank
+    @Size(max = 50)
+    private String lastName;
+
+    @NotBlank
     @Size(min = 3, max = 20)
     private String username;
 
@@ -25,6 +33,22 @@ public class RegisterRequest {
 
     // File path will be set after file upload processing
     private String idProofFilePath;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public String getUsername() {
         return username;

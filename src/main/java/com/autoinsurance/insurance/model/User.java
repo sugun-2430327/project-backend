@@ -16,6 +16,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
     @Column(unique = true, nullable = false)
     private String username;
 
@@ -38,8 +44,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    // Constructor with fields
-    public User(String username, String password, String email, Role role) {
+    // Constructor with basic fields
+    public User(String firstName, String lastName, String username, String password, String email, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -47,7 +55,9 @@ public class User implements UserDetails {
     }
 
     // Constructor with all fields including new ones
-    public User(String username, String password, String email, Role role, Double incomePerAnnum, String idProofFilePath) {
+    public User(String firstName, String lastName, String username, String password, String email, Role role, Double incomePerAnnum, String idProofFilePath) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -63,6 +73,22 @@ public class User implements UserDetails {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUsername() {
