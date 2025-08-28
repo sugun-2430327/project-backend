@@ -10,6 +10,8 @@ public class SupportTicketResponse {
     private Long userId;
     private String customerUsername;
     private String customerEmail;
+    private String firstName;
+    private String lastName;
     private String issueDescription;
     private TicketStatus ticketStatus;
     private LocalDate createdDate;
@@ -30,6 +32,8 @@ public class SupportTicketResponse {
         this.userId = ticket.getUser().getUserId();
         this.customerUsername = ticket.getUser().getUsername();
         this.customerEmail = ticket.getUser().getEmail();
+        this.firstName = ticket.getUser().getFirstName();
+        this.lastName = ticket.getUser().getLastName();
         this.issueDescription = ticket.getIssueDescription();
         this.ticketStatus = ticket.getTicketStatus();
         this.createdDate = ticket.getCreatedDate();
@@ -81,6 +85,22 @@ public class SupportTicketResponse {
     
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
     
     public String getIssueDescription() {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +55,15 @@ public class ClaimService {
         // Verify the policy enrollment is approved
         if (policyEnrollment.getEnrollmentStatus() != EnrollmentStatus.APPROVED) {
             throw new AccessDeniedException("You can only submit claims for approved policy enrollments");
+        }
+
+        // Validate claim amount does not exceed coverage amount
+        BigDecimal coverageAmount = policyEnrollment.getPolicyTemplate().getCoverageAmount();
+        if (claimRequest.getClaimAmount().compareTo(coverageAmount) > 0) {
+            throw new IllegalArgumentException(
+                String.format("Claim amount ₹%.2f exceeds your policy coverage limit of ₹%.2f", 
+                    claimRequest.getClaimAmount().doubleValue(), 
+                    coverageAmount.doubleValue()));
         }
 
         // Create and save the claim
@@ -163,10 +173,12 @@ public class ClaimService {
                 claim.getPolicyEnrollment().getGeneratedPolicyNumber(),
                 claim.getPolicyEnrollment().getCustomer().getUsername(),
                 claim.getPolicyEnrollment().getCustomer().getEmail(),
+                claim.getPolicyEnrollment().getCustomer().getFirstName(),
+                claim.getPolicyEnrollment().getCustomer().getLastName(),
                 claim.getClaimAmount(),
                 claim.getClaimDate(),
                 claim.getClaimStatus(),
-                null, // No agent assigned anymore
+                null, // No admin username for claims processed automatically
                 claim.getClaimDescription(),
                 claim.getAdminNotes()
         );

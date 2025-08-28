@@ -11,6 +11,8 @@ public class ClaimResponse {
     private String generatedPolicyNumber;
     private String customerUsername;
     private String customerEmail;
+    private String firstName;
+    private String lastName;
     private BigDecimal claimAmount;
     private LocalDate claimDate;
     private ClaimStatus claimStatus;
@@ -24,14 +26,16 @@ public class ClaimResponse {
 
     // Constructor
     public ClaimResponse(Long claimId, Long policyEnrollmentId, String generatedPolicyNumber, 
-                        String customerUsername, String customerEmail, BigDecimal claimAmount, 
-                        LocalDate claimDate, ClaimStatus claimStatus, String adminUsername, 
+                        String customerUsername, String customerEmail, String firstName, String lastName, 
+                        BigDecimal claimAmount, LocalDate claimDate, ClaimStatus claimStatus, String adminUsername, 
                         String claimDescription, String adminNotes) {
         this.claimId = claimId;
         this.policyEnrollmentId = policyEnrollmentId;
         this.generatedPolicyNumber = generatedPolicyNumber;
         this.customerUsername = customerUsername;
         this.customerEmail = customerEmail;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.claimAmount = claimAmount;
         this.claimDate = claimDate;
         this.claimStatus = claimStatus;
@@ -79,6 +83,22 @@ public class ClaimResponse {
 
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public BigDecimal getClaimAmount() {
