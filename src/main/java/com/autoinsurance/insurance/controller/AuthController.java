@@ -42,7 +42,7 @@ public class AuthController {
             @RequestParam("password") String password,
             @RequestParam("email") String email,
             @RequestParam(value = "role", defaultValue = "CUSTOMER") String role,
-            @RequestParam(value = "incomePerAnnum", required = false) Double incomePerAnnum,
+            @RequestParam(value = "age", required = false) Integer age,
             @RequestParam(value = "idProof", required = false) MultipartFile idProofFile) {
         
         try {
@@ -57,7 +57,7 @@ public class AuthController {
             registerRequest.setUsername(username);
             registerRequest.setPassword(password);
             registerRequest.setEmail(email);
-            registerRequest.setIncomePerAnnum(incomePerAnnum);
+            registerRequest.setAge(age);
             registerRequest.setRole(Role.valueOf(role.toUpperCase()));
             
             // Handle file upload if provided

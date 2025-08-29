@@ -76,7 +76,7 @@ public class AuthService {
                 passwordEncoder.encode(registerRequest.getPassword()),
                 registerRequest.getEmail(),
                 registerRequest.getRole() != null ? registerRequest.getRole() : Role.CUSTOMER,
-                registerRequest.getIncomePerAnnum(),
+                registerRequest.getAge(),
                 registerRequest.getIdProofFilePath());
 
         return userRepository.save(user);

@@ -29,7 +29,7 @@ public class RegisterRequest {
 
     private Role role;
 
-    private Double incomePerAnnum;
+    private Integer age;
 
     // File path will be set after file upload processing
     private String idProofFilePath;
@@ -82,12 +82,12 @@ public class RegisterRequest {
         this.role = role;
     }
 
-    public Double getIncomePerAnnum() {
-        return incomePerAnnum;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setIncomePerAnnum(Double incomePerAnnum) {
-        this.incomePerAnnum = incomePerAnnum;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getIdProofFilePath() {

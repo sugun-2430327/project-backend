@@ -10,7 +10,7 @@ public class UserResponse {
     private String username;
     private String email;
     private String role;
-    private Double incomePerAnnum;
+    private Integer age;
     private String idProofFilePath;
 
     // Default constructor
@@ -25,7 +25,7 @@ public class UserResponse {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.role = user.getRole().name();
-        this.incomePerAnnum = user.getIncomePerAnnum();
+        this.age = user.getAge();
         this.idProofFilePath = user.getIdProofFilePath();
     }
 
@@ -78,12 +78,12 @@ public class UserResponse {
         this.role = role;
     }
 
-    public Double getIncomePerAnnum() {
-        return incomePerAnnum;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setIncomePerAnnum(Double incomePerAnnum) {
-        this.incomePerAnnum = incomePerAnnum;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getIdProofFilePath() {

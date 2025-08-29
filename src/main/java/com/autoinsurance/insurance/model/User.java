@@ -34,8 +34,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "income_per_annum")
-    private Double incomePerAnnum;
+    @Column(name = "age")
+    private Integer age;
 
     @Column(name = "id_proof_file_path")
     private String idProofFilePath;
@@ -55,14 +55,14 @@ public class User implements UserDetails {
     }
 
     // Constructor with all fields including new ones
-    public User(String firstName, String lastName, String username, String password, String email, Role role, Double incomePerAnnum, String idProofFilePath) {
+    public User(String firstName, String lastName, String username, String password, String email, Role role, Integer age, String idProofFilePath) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.incomePerAnnum = incomePerAnnum;
+        this.age = age;
         this.idProofFilePath = idProofFilePath;
     }
 
@@ -154,12 +154,12 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public Double getIncomePerAnnum() {
-        return incomePerAnnum;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setIncomePerAnnum(Double incomePerAnnum) {
-        this.incomePerAnnum = incomePerAnnum;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getIdProofFilePath() {

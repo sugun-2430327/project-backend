@@ -162,8 +162,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="regIncome">Income Per Annum (Optional):</label>
-                    <input type="number" id="regIncome" step="0.01" placeholder="Enter annual income">
+                    <label for="regAge">Age (Optional):</label>
+                    <input type="number" id="regAge" min="1" max="150" placeholder="Enter age">
                 </div>
                 <div class="form-group">
                     <label for="regIdProof">ID Proof (Optional):</label>
@@ -246,7 +246,7 @@
             const password = document.getElementById('regPassword').value;
             const email = document.getElementById('regEmail').value;
             const role = document.getElementById('regRole').value;
-            const income = document.getElementById('regIncome').value;
+            const age = document.getElementById('regAge').value;
             const idProofFile = document.getElementById('regIdProof').files[0];
             const messageDiv = document.getElementById('registerMessage');
             
@@ -261,8 +261,8 @@
                 formData.append('role', role);
                 
                 // Add optional fields only if they have values
-                if (income && income.trim() !== '') {
-                    formData.append('incomePerAnnum', parseFloat(income));
+                if (age && age.trim() !== '') {
+                    formData.append('age', parseInt(age));
                 }
                 if (idProofFile) {
                     formData.append('idProof', idProofFile);
@@ -343,7 +343,7 @@
                         <p><strong>Username:</strong> ${data.username}</p>
                         <p><strong>Email:</strong> ${data.email}</p>
                         <p><strong>Role:</strong> ${data.role}</p>
-                        <p><strong>Income Per Annum:</strong> ${data.incomePerAnnum || 'N/A'}</p>
+                        <p><strong>Age:</strong> ${data.age || 'N/A'}</p>
                         <p><strong>ID Proof File:</strong> ${data.idProofFilePath || 'N/A'}</p>
                     `;
                     messageDiv.className = 'message success';
